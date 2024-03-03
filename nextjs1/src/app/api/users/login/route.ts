@@ -42,17 +42,20 @@ export async function POST(req: NextRequest, res: NextResponse) {
       expiresIn: "1d",
     });
 
-    const response = NextResponse.json({
-      message: "Login Successfully",
-      success: true,
-    });
+    let message;
+    if (!user.isVerified) {
+      message = "Login successful but user not verified";
+    } else {
+      message = "Login successful";
+    }
+
+    const response = NextResponse.json({ message, success: true });
 
     response.cookies.set("token", token, {
       httpOnly: true,
     });
 
     return response;
-
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
